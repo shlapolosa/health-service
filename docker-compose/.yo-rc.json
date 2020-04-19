@@ -1,0 +1,15 @@
+{
+  "generator-jhipster": {
+    "deploymentType": "docker-compose",
+    "gatewayType": "zuul",
+    "monitoring": "prometheus",
+    "directoryPath": "../",
+    "appsFolders": ["patientCare", "referenceData", "referal", "schedule", "care", "verification"],
+    "clusteredDbApps": [],
+    "consoleOptions": ["curator", "zipkin"],
+    "serviceDiscoveryType": "eureka",
+    "dockerRepositoryName": "shlapolosa",
+    "dockerPushCommand": "docker push",
+    "jwtSecretKey": "NzNhNjAyODNjMTYzNTE3YjY1MmZiN2Q1NTU0MjllOTZmNTI1MzNmNGI0MWM0OGRhMjA0NmY2YjNiOGZiMzJlMDRkOTE1YmJiOTQ1NmYzZjVkMTk1ZmFmNTU5NTNkYjBhYjBkYQ=="
+  }
+}

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="discovery-service" />
+        <module name="schedule-service" />
+        <module name="eureka-server" />
+        <module name="discovery-server" />
+        <module name="eureka-client" />
+        <module name="api-gateway" />
+        <module name="referral-service" />
+        <module name="eureka-client-2" />
+        <module name="verification-service" />
+        <module name="eureka-client-3" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api-gateway" target="1.8" />
+      <module name="discovery-server" target="1.8" />
+      <module name="discovery-service" target="1.8" />
+      <module name="eureka-client" target="1.8" />
+      <module name="eureka-client-2" target="1.8" />
+      <module name="eureka-client-3" target="1.8" />
+      <module name="eureka-server" target="1.8" />
+      <module name="health-services" target="1.5" />
+      <module name="referral-service" target="1.8" />
+      <module name="schedule-service" target="1.8" />
+      <module name="verification-service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-gateway" options="-parameters" />
+      <module name="discovery-server" options="-parameters" />
+      <module name="discovery-service" options="-parameters" />
+      <module name="eureka-client" options="-parameters" />
+      <module name="eureka-client-2" options="-parameters" />
+      <module name="eureka-client-3" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="referral-service" options="-parameters" />
+      <module name="schedule-service" options="-parameters" />
+      <module name="verification-service" options="-parameters" />
+    </option>
+  </component>
+</project>

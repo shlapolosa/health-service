@@ -1,0 +1,22 @@
+#common configuration shared between all applications
+configserver:
+  name: Docker JHipster Registry
+  status: Connected to the JHipster Registry running in Docker
+
+jhipster:
+  security:
+    authentication:
+      jwt:
+        base64-secret: NzNhNjAyODNjMTYzNTE3YjY1MmZiN2Q1NTU0MjllOTZmNTI1MzNmNGI0MWM0OGRhMjA0NmY2YjNiOGZiMzJlMDRkOTE1YmJiOTQ1NmYzZjVkMTk1ZmFmNTU5NTNkYjBhYjBkYQ==
+
+spring:
+  zipkin:
+    base-url: http://jhipster-zipkin:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1 # report 100% of traces to Zipkin
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:${jhipster.registry.password}@jhipster-registry:8761/eureka/
