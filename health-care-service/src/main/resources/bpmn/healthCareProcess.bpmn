@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1ww6c3d" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.2">
+  <bpmn:process id="healthCareProcess" name="National Health Care Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_07kmvgi</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_07kmvgi" sourceRef="StartEvent_1" targetRef="handleReferral" />
+    <bpmn:callActivity id="handleReferral" name="Handle Referral" calledElement="referralProcess">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in variables="all" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07kmvgi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1j4e5th</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1j4e5th" sourceRef="handleReferral" targetRef="Gateway_0vkly2k" />
+    <bpmn:exclusiveGateway id="Gateway_0vkly2k">
+      <bpmn:incoming>Flow_1j4e5th</bpmn:incoming>
+      <bpmn:outgoing>isEligible</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1o983n7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="isEligible" name="Prospect Is Eligable" sourceRef="Gateway_0vkly2k" targetRef="assessProspect">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{isEligible}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="assessProspect" name="Assess Prospect" calledElement="assesmentProcess">
+      <bpmn:incoming>isEligible</bpmn:incoming>
+      <bpmn:outgoing>Flow_08fqt7a</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_08fqt7a" sourceRef="assessProspect" targetRef="Gateway_0zko09t" />
+    <bpmn:callActivity id="startCare" name="Start Care" calledElement="carePlanningProcess">
+      <bpmn:incoming>needsCare</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cstls9</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="Gateway_0zko09t">
+      <bpmn:incoming>Flow_08fqt7a</bpmn:incoming>
+      <bpmn:outgoing>needsCare</bpmn:outgoing>
+      <bpmn:outgoing>noCareNeeded</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="needsCare" name="Patient Needs Care" sourceRef="Gateway_0zko09t" targetRef="startCare">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{needsCare}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1t11t1x">
+      <bpmn:incoming>Flow_0cstls9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0cstls9" sourceRef="startCare" targetRef="Event_1t11t1x" />
+    <bpmn:endEvent id="Event_1n0wb3m">
+      <bpmn:incoming>Flow_1o983n7</bpmn:incoming>
+      <bpmn:incoming>noCareNeeded</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1o983n7" name="Prospect is not Eligable" sourceRef="Gateway_0vkly2k" targetRef="Event_1n0wb3m">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{ not isEligible}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="noCareNeeded" name="Prospect does not need care" sourceRef="Gateway_0zko09t" targetRef="Event_1n0wb3m">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{ not needsCare}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="healthCareProcess">
+      <bpmndi:BPMNEdge id="Flow_1cj79qr_di" bpmnElement="noCareNeeded">
+        <di:waypoint x="830" y="142" />
+        <di:waypoint x="830" y="230" />
+        <di:waypoint x="668" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="801" y="183" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o983n7_di" bpmnElement="Flow_1o983n7">
+        <di:waypoint x="470" y="142" />
+        <di:waypoint x="470" y="230" />
+        <di:waypoint x="632" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="450" y="183" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cstls9_di" bpmnElement="Flow_0cstls9">
+        <di:waypoint x="1050" y="117" />
+        <di:waypoint x="1152" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00hrnzr_di" bpmnElement="needsCare">
+        <di:waypoint x="855" y="117" />
+        <di:waypoint x="950" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="870" y="86" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08fqt7a_di" bpmnElement="Flow_08fqt7a">
+        <di:waypoint x="730" y="117" />
+        <di:waypoint x="805" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_154lrk4_di" bpmnElement="isEligible">
+        <di:waypoint x="495" y="117" />
+        <di:waypoint x="630" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="537" y="86" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j4e5th_di" bpmnElement="Flow_1j4e5th">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="445" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07kmvgi_di" bpmnElement="Flow_07kmvgi">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15460cv_di" bpmnElement="handleReferral">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0vkly2k_di" bpmnElement="Gateway_0vkly2k" isMarkerVisible="true">
+        <dc:Bounds x="445" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0thcccn_di" bpmnElement="assessProspect">
+        <dc:Bounds x="630" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07dwzpc_di" bpmnElement="startCare">
+        <dc:Bounds x="950" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0zko09t_di" bpmnElement="Gateway_0zko09t" isMarkerVisible="true">
+        <dc:Bounds x="805" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1t11t1x_di" bpmnElement="Event_1t11t1x">
+        <dc:Bounds x="1152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1n0wb3m_di" bpmnElement="Event_1n0wb3m">
+        <dc:Bounds x="632" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

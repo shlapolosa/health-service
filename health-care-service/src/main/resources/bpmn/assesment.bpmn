@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0592gw6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.2">
+  <bpmn:process id="assesmentProcess" name="Assesement Process" isExecutable="true" camunda:versionTag="v1">
+    <bpmn:startEvent id="assesmentRequest">
+      <bpmn:outgoing>Flow_1l2txea</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:callActivity id="scheduleAssesment" name="Schedule an Assesment" camunda:caseRef="scheduleAssesmentCase">
+      <bpmn:incoming>Flow_1l2txea</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fzc5kx</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="Gateway_00wcuin">
+      <bpmn:incoming>Flow_0fzc5kx</bpmn:incoming>
+      <bpmn:outgoing>createPatientTrue</bpmn:outgoing>
+      <bpmn:outgoing>dontCreatePatient</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0fzc5kx" sourceRef="scheduleAssesment" targetRef="Gateway_00wcuin" />
+    <bpmn:sequenceFlow id="createPatientTrue" name="Go ahead and create the patient" sourceRef="Gateway_00wcuin" targetRef="createPatient">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{createPatient}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_05dm7lt">
+      <bpmn:incoming>Flow_0iaqzol</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0iaqzol" sourceRef="createPatient" targetRef="Event_05dm7lt" />
+    <bpmn:serviceTask id="createPatient" name="Create a Patient" camunda:type="external" camunda:topic="createPatient">
+      <bpmn:incoming>createPatientTrue</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iaqzol</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1nl4fck">
+      <bpmn:incoming>dontCreatePatient</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="dontCreatePatient" name="Dont create the patient" sourceRef="Gateway_00wcuin" targetRef="Event_1nl4fck">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{ not createPatient}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1l2txea" sourceRef="assesmentRequest" targetRef="scheduleAssesment" />
+    <bpmn:textAnnotation id="TextAnnotation_0iu4blx">
+      <bpmn:text>Schedule when the medical practitioner can asses the prospect</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1w4tzv4" sourceRef="scheduleAssesment" targetRef="TextAnnotation_0iu4blx" />
+    <bpmn:textAnnotation id="TextAnnotation_00bqe5j">
+      <bpmn:text>convert a prospect to an patient based with an EHR</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_00rvltl" sourceRef="createPatient" targetRef="TextAnnotation_00bqe5j" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="assesmentProcess">
+      <bpmndi:BPMNEdge id="Flow_0iaqzol_di" bpmnElement="Flow_0iaqzol">
+        <di:waypoint x="880" y="177" />
+        <di:waypoint x="942" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rf0i1r_di" bpmnElement="createPatientTrue">
+        <di:waypoint x="715" y="177" />
+        <di:waypoint x="780" y="177" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="701" y="146" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fzc5kx_di" bpmnElement="Flow_0fzc5kx">
+        <di:waypoint x="390" y="177" />
+        <di:waypoint x="665" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1reprff_di" bpmnElement="dontCreatePatient">
+        <di:waypoint x="690" y="202" />
+        <di:waypoint x="690" y="290" />
+        <di:waypoint x="658" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="668" y="243" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0iu4blx_di" bpmnElement="TextAnnotation_0iu4blx">
+        <dc:Bounds x="370" y="50" width="100" height="82" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_00bqe5j_di" bpmnElement="TextAnnotation_00bqe5j">
+        <dc:Bounds x="720" y="50" width="100" height="68" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1l2txea_di" bpmnElement="Flow_1l2txea">
+        <di:waypoint x="148" y="178" />
+        <di:waypoint x="290" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1nl4fck_di" bpmnElement="Event_1nl4fck">
+        <dc:Bounds x="622" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assesmentRequest">
+        <dc:Bounds x="112" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05dm7lt_di" bpmnElement="Event_05dm7lt">
+        <dc:Bounds x="942" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_084yts3_di" bpmnElement="createPatient">
+        <dc:Bounds x="780" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00wcuin_di" bpmnElement="Gateway_00wcuin" isMarkerVisible="true">
+        <dc:Bounds x="665" y="152" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_155bdgm_di" bpmnElement="scheduleAssesment">
+        <dc:Bounds x="290" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_00rvltl_di" bpmnElement="Association_00rvltl">
+        <di:waypoint x="804" y="137" />
+        <di:waypoint x="792" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1w4tzv4_di" bpmnElement="Association_1w4tzv4">
+        <di:waypoint x="377" y="137" />
+        <di:waypoint x="382" y="132" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
