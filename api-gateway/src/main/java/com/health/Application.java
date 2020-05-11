@@ -57,7 +57,7 @@ public class Application {
                     .authorizeRequests().anyRequest().authenticated()
                     .and()
                     .oauth2Login();
-			
+
             // @formatter:on
         }
     }
