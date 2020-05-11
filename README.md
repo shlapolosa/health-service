@@ -10,7 +10,8 @@ Install the dependencies and devDependencies and start the server.
 ```sh
 $ git clone https://github.com/shlapolosa/health-service.git
 $ cd health-service
-$ then run  mvn clean package spring-boot:run inside, discovery-server, api-gateway, healh-care-service
+$ mvn clean install -DskipTests=true
+$ mvn spring-boot:run inside, discovery-server, api-gateway, healh-care-service
 ```
 Once the service is up and running, test using postman;
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/0f452db22527a235a9b5)
