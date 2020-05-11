@@ -13,5 +13,6 @@
         <module>schedule-service</module>
         <module>referral-service</module>
         <module>discovery-server</module>
+        <module>health-care-service</module>
     </modules>
 </project>

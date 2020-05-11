@@ -9,17 +9,19 @@
         <module name="discovery-service" />
         <module name="schedule-service" />
         <module name="eureka-server" />
-        <module name="discovery-server" />
+        <module name="verification-service" />
         <module name="eureka-client" />
         <module name="api-gateway" />
-        <module name="referral-service" />
         <module name="eureka-client-2" />
-        <module name="verification-service" />
+        <module name="referral-service" />
+        <module name="discovery-server" />
+        <module name="camunda-spring-boot-example" />
         <module name="eureka-client-3" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api-gateway" target="1.8" />
+      <module name="camunda-spring-boot-example" target="1.8" />
       <module name="discovery-server" target="1.8" />
       <module name="discovery-service" target="1.8" />
       <module name="eureka-client" target="1.8" />
@@ -35,6 +37,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
+      <module name="camunda-spring-boot-example" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="eureka-client" options="-parameters" />

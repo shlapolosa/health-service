@@ -47,19 +47,26 @@ public class AuthorizationHeaderFilter extends ZuulFilter {
 
     private Optional<String> getAuthorizationHeader() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-        OAuth2AuthorizedClient client = clientService.loadAuthorizedClient(
-                oauthToken.getAuthorizedClientRegistrationId(),
-                oauthToken.getName());
+        if(authentication instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+            OAuth2AuthorizedClient client = clientService.loadAuthorizedClient(
+                    oauthToken.getAuthorizedClientRegistrationId(),
+                    oauthToken.getName());
 
-        OAuth2AccessToken accessToken = client.getAccessToken();
+            OAuth2AccessToken accessToken = null;
 
-        if (accessToken == null) {
-            return Optional.empty();
-        } else {
-            String tokenType = accessToken.getTokenType().getValue();
-            String authorizationHeaderValue = String.format("%s %s", tokenType, accessToken.getTokenValue());
-            return Optional.of(authorizationHeaderValue);
+            if (client != null) {
+                accessToken = client.getAccessToken();
+            }
+
+            if (accessToken == null) {
+                return Optional.empty();
+            } else {
+                String tokenType = accessToken.getTokenType().getValue();
+                String authorizationHeaderValue = String.format("%s %s", tokenType, accessToken.getTokenValue());
+                return Optional.of(authorizationHeaderValue);
+            }
         }
+        return Optional.empty();
     }
 }
