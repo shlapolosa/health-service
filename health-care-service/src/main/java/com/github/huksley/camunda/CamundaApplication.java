@@ -19,7 +19,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
-import org.springframework.security.oauth2.common.AuthenticationScheme;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +51,7 @@ public class CamundaApplication {
         String username = principal.getName();
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         log.info("claims: " + token.getTokenAttributes());
-        return "Hello, " + username;
+        return "Hello, "+ username ;
     }
 
     @GetMapping(value = "/prospect/{processID}")
@@ -69,7 +68,7 @@ public class CamundaApplication {
         protected void configure(HttpSecurity http) throws Exception {
             // @formatter:off
             http
-
+                    .csrf().disable()
                     .authorizeRequests()
                     .antMatchers("/home","/engine-rest/**").authenticated()
                     .anyRequest()
@@ -104,7 +103,7 @@ public class CamundaApplication {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:8050"));
+        config.setAllowedOrigins(Collections.singletonList("*"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         source.registerCorsConfiguration("/**", config);
