@@ -1,15 +1,13 @@
 package com.github.huksley.camunda;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.camunda.bpm.engine.delegate.Expression;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.delegate.VariableScope;
-import org.camunda.bpm.engine.impl.el.FixedValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
@@ -31,9 +29,15 @@ public class RegisterClient implements JavaDelegate {
 //    Expression isReferral;
 
     static final Logger log = LoggerFactory.getLogger(RegisterClient.class);
+
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
         Map<String, Object> variables = delegateExecution.getVariables();
+        Prospect prospect = new Prospect();
+        prospect.setName((String) variables.get("name"));
+        prospect.setIsReferral((Boolean) variables.get("isReferral"));
+        prospect.setProcessID(delegateExecution.getProcessInstanceId());
+
         log.info("=========================================================================");
 //        log.info(delegateExecution.getVariableTyped("customer").toString());
         log.info((String) variables.get("name"));
