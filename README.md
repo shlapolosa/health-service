@@ -18,7 +18,11 @@ Once the service is up and running, test using postman;
 
 # Note!
 You would have to update application.properties with the correct okta application details first in each project
-Always run in incognito to get the access token
+Always run in incognito to get the access token.
+Need to have a webapp application which allows for username and password credential login, also need
+a service application for interservice communication;
+webapp application - profile claim
+service application - client_credentials claim, customer scope and uses secrete and client id only.
 
 ### Tech
 ## Application Architecture conceptual view
