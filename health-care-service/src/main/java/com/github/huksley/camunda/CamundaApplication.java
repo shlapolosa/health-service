@@ -30,6 +30,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Optional;
 
 @SpringBootApplication
 @EnableProcessApplication
@@ -54,11 +55,23 @@ public class CamundaApplication {
         return "Hello, "+ username ;
     }
 
-    @GetMapping(value = "/prospect/{processID}")
-    public Prospect getProspect(@PathVariable String processID) {
+    @GetMapping(value = "/prospect/process/{processID}")
+    public Prospect getProspectByProcess(@PathVariable String processID) {
 
-        Prospect prospect = prospectService.getProspect(processID);
-        return prospect;
+        Optional<Prospect> prospect = prospectService.getProspectByProcess(processID);
+        return prospect.orElse(new Prospect());
+    }
+
+    @GetMapping(value = "/prospect/{id}")
+    public Prospect getProspectByID(@PathVariable Long id) {
+        Optional<Prospect> prospect = prospectService.getProspectByID(id);
+        return prospect.orElse(new Prospect());
+    }
+
+    @GetMapping(value = "/prospect/businesskey/{idnumber}")
+    public Prospect getProspectByIDNumber(@PathVariable String idnumber) {
+        Optional<Prospect> prospect = prospectService.getProspectByIDNumber(idnumber);
+        return prospect.orElse(new Prospect());
     }
 
     @Configuration

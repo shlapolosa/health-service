@@ -3,6 +3,9 @@ package com.github.huksley.camunda;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.camunda.bpm.engine.externaltask.LockedExternalTask;
+import org.camunda.bpm.engine.variable.VariableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +29,9 @@ public class ExternalTaskExecutor {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    ProspectRepository prospectRepository;
+
     @Value("${server.port}")
     int port = 8080;
 
@@ -34,6 +41,9 @@ public class ExternalTaskExecutor {
     @Data
     static class TaskInfo {
         String id;
+        String processInstanceId;
+        int retries;
+        Map<String, VariableReference2> variables;
     }
 
     @Data
@@ -45,6 +55,19 @@ public class ExternalTaskExecutor {
     }
 
     @Data
+    @NoArgsConstructor
+    static class Idnumber {
+        String value;
+    }
+
+    @Data
+    @NoArgsConstructor
+    static class ResponseVariables {
+        Idnumber idnumber;
+        Idnumber idnumber2;
+    }
+
+    @Data
     @Builder
     static class FetchTopicRequest {
         String topicName;
@@ -53,8 +76,19 @@ public class ExternalTaskExecutor {
     }
 
     @Data
+    static class VariablesList {
+        HashMap<String, VariableReference> variables;
+    }
+
+    @Data
     @Builder
     static class VariableReference {
+        String value;
+    }
+
+    @Data
+    @NoArgsConstructor
+    static class VariableReference2 {
         String value;
     }
 
@@ -68,16 +102,15 @@ public class ExternalTaskExecutor {
     @Scheduled(initialDelay = 5000, fixedRate = 5000)
     public void periodicalTaskExecutor() {
         FetchRequest r = FetchRequest.builder().
-            maxTasks(1).
-            workerId(workerId).
-            topics(new FetchTopicRequest[]{
-                FetchTopicRequest.builder().
-                    lockDuration(10000).
-                    topicName("approveExternal").
-                    variables(new String[]{"favoriteColor"}).
-                    build()
-            }).
-            build();
+                maxTasks(1).
+                workerId(workerId).
+                topics(new FetchTopicRequest[]{
+                        FetchTopicRequest.builder().
+                                lockDuration(10000).
+                                topicName("approveExternal").
+                                build()
+                }).
+                build();
 
         try {
             String fetchUrl = "http://localhost:" + port + "/engine-rest/external-task/fetchAndLock";
@@ -85,12 +118,18 @@ public class ExternalTaskExecutor {
             log.info("Got {} external tasks to execute", fetchResponse.length);
             for (TaskInfo task : fetchResponse) {
                 log.info("Marking {} as complete", task.getId());
+                Prospect prospect = new Prospect();
+                prospect.setProcessID(task.getProcessInstanceId());
+                prospect.setName(((VariableReference2)task.getVariables().get("name")).getValue());
+                prospect.setIsReferral(((VariableReference2)task.getVariables().get("isReferral")).getValue().equals("true"));
+                prospect.setIdNumber(((VariableReference2)task.getVariables().get("idNumber")).getValue());
+                prospect = prospectRepository.save(prospect);
                 String completeUrl = "http://localhost:" + port + "/engine-rest/external-task/" + task.getId() + "/complete";
                 CompleteRequest completeRequest = CompleteRequest.builder().
-                    workerId(workerId).
-                    variables(new HashMap<>()).
-                    build();
-                completeRequest.variables.put("approved", VariableReference.builder().value("Certified fresh!").build());
+                        workerId(workerId).
+                        variables(new HashMap<>()).
+                        build();
+                completeRequest.variables.put("created", VariableReference.builder().value(String.valueOf(prospect.getId())).build());
                 restTemplate.postForEntity(completeUrl, completeRequest, null);
             }
         } catch (Exception e) {

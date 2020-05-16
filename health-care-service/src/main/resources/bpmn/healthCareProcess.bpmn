@@ -9,6 +9,7 @@
       <bpmn:extensionElements>
         <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:in variables="all" />
+        <camunda:out variables="all" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_07kmvgi</bpmn:incoming>
       <bpmn:outgoing>Flow_1j4e5th</bpmn:outgoing>

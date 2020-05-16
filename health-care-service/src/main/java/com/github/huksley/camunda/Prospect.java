@@ -17,6 +17,7 @@ public class Prospect{
 
     String processID;
     String name;
+    String idNumber;
     Boolean isReferral;
 
 }
