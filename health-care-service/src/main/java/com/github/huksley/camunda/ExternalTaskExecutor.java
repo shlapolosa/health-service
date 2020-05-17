@@ -119,18 +119,30 @@ public class ExternalTaskExecutor {
             for (TaskInfo task : fetchResponse) {
                 log.info("Marking {} as complete", task.getId());
                 Prospect prospect = new Prospect();
-                prospect.setProcessID(task.getProcessInstanceId());
-                prospect.setName(((VariableReference2)task.getVariables().get("name")).getValue());
-                prospect.setIsReferral(((VariableReference2)task.getVariables().get("isReferral")).getValue().equals("true"));
-                prospect.setIdNumber(((VariableReference2)task.getVariables().get("idNumber")).getValue());
-                prospect = prospectRepository.save(prospect);
-                String completeUrl = "http://localhost:" + port + "/engine-rest/external-task/" + task.getId() + "/complete";
-                CompleteRequest completeRequest = CompleteRequest.builder().
-                        workerId(workerId).
-                        variables(new HashMap<>()).
-                        build();
-                completeRequest.variables.put("created", VariableReference.builder().value(String.valueOf(prospect.getId())).build());
-                restTemplate.postForEntity(completeUrl, completeRequest, null);
+                String idNumber = ((VariableReference2)task.getVariables().get("idNumber")).getValue();
+                if(idNumber.length() > 8){
+//                    String errorUrl = "http://localhost:" + port + "/engine-rest/external-task/" + task.getId() + "/complete";
+//                    CompleteRequest completeRequest = CompleteRequest.builder().
+//                            workerId(workerId).
+//                            variables(new HashMap<>()).
+//                            build();
+//                    completeRequest.variables.put("created", VariableReference.builder().value(String.valueOf(prospect.getId())).build());
+//                    restTemplate.postForEntity(completeUrl, completeRequest, null);
+
+                }else {
+                    prospect.setIdNumber(idNumber);
+                    prospect.setProcessID(task.getProcessInstanceId());
+                    prospect.setName(((VariableReference2) task.getVariables().get("name")).getValue());
+                    prospect.setIsReferral(((VariableReference2) task.getVariables().get("isReferral")).getValue().equals("true"));
+                    prospect = prospectRepository.save(prospect);
+                    String completeUrl = "http://localhost:" + port + "/engine-rest/external-task/" + task.getId() + "/complete";
+                    CompleteRequest completeRequest = CompleteRequest.builder().
+                            workerId(workerId).
+                            variables(new HashMap<>()).
+                            build();
+                    completeRequest.variables.put("created", VariableReference.builder().value(String.valueOf(prospect.getId())).build());
+                    restTemplate.postForEntity(completeUrl, completeRequest, null);
+                }
             }
         } catch (Exception e) {
             log.warn("Failed too check for tasks: {}", e.getMessage(), e);
